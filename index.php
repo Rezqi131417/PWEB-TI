@@ -1,28 +1,53 @@
-<!DOCTYPE html>
-<html lang="id">
+<!-- halaman Login sistem SIM RS -->
+ <!-- form login -->
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Login SIAKAD</title>
+    <link rel="stylesheet" type="text/css" href="style.css">    
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.php" class="active">Home</a></li>
-            <li><a href="pendaftaran.php">Pendaftaran</a></li>
-            <li><a href="data_pendaftaran.php">Data Pendaftaran</a></li>
-        </ul>
-    </nav>
+ <div class="login-container">
+    <form action="" method="post">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Masukkan username" required>
+        </div>
 
-    <h1>Welcome to My Website</h1>
-    <p style="color: var(--text-muted); margin-top: 10px; font-size: 1rem;">
-        Selamat datang di sistem informasi pendaftaran mahasiswa / siswa. Silakan pilih menu di atas atau klik tombol di bawah untuk mulai mendaftar.
-    </p>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+        </div>
 
-    <div style="margin-top: 25px; display: flex; gap: 12px;">
-        <a href="pendaftaran.php" class="btn">Mulai Pendaftaran</a>
-        <a href="data_pendaftaran.php" class="btn" style="background: #64748b;">Lihat Data Pendaftar</a>
-    </div>
+        <input type="submit" name="login" value="Login">
+    </form>
+</div>
 </body>
 </html>
+<?php
+session_start();
+include 'koneksi.php';
+// proses login
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    // Menggunakan password_hash untuk keamanan
+    $password = md5($_POST['password']);
+
+    // Query untuk memeriksa username dan password
+    $query = "SELECT * FROM user WHERE username='$username' AND password='$password'";
+    $result = mysqli_query($conn, $query);
+
+    if (mysqli_num_rows($result) == 1) {
+        // Login berhasil
+        $row = mysqli_fetch_assoc($result);
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['level'] = $row['level'];
+        header("Location: home.php");
+        exit();
+    } else {
+        // Login gagal
+        echo "<script>alert('Username atau password salah!');</script>";
+    }
+}
